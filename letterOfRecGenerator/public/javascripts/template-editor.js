@@ -1,24 +1,9 @@
-let Embed = Quill.import('blots/embed');
-var quill = new Quill("#editor");
-
 var questionID = 0;
 // array of tags
 const tagArray = [];
 
-class SpanEmbed extends Embed {
-  static create(value) {
-    const node = super.create();
-    node.classList.add('span-insert');
-    node.innerText = value;
-    return node;
-  }
-}
-
 window.onload = function () {
-  // Quill initialization
-  SpanEmbed.blotName = 'spanEmbed';
-  SpanEmbed.tagName = 'span';
-  Quill.register(SpanEmbed);
+
 };
 
 // Show options if checkbox or multiple choice is selected
@@ -330,29 +315,65 @@ document.querySelector("form").addEventListener("input", function (event) {
         }
       }
     }
-
-  
-
   }
 });
 
-
 // Tag insert
-document.querySelector(".tags").addEventListener("click", (event) => {
+document.querySelector(".tags").addEventListener("mousedown", (event) => {
   event.preventDefault();
   if (event.target.classList.contains("tag")) {
-    console.log("click tag");
+    // console.log("click tag");
+    var html = "<span class='span-insert' contenteditable='false'>&nbsp" + 
+    event.target.getAttribute("data-value")  + "&nbsp</span>";
+    var sel, range;
+    if (window.getSelection) {
+      // console.log(window.getSelection().anchorNode.id);
+      // console.log(window.getSelection().anchorNode.parentNode.id);
+      if (window.getSelection().anchorNode == null) {
+        return;
+      }
+      if (window.getSelection().anchorNode.id  === "editor" ||
+      window.getSelection().anchorNode.parentNode.id === "editor") {
+        // IE9 and non-IE
+        sel = window.getSelection();
+        // console.log(window.getSelection());
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
 
-    quill.focus();
-    var range = quill.getSelection();
-    while (!range) { };
-    if (range) {
-      console.log(range.index);
-      quill.insertEmbed(range.index, 'spanEmbed', " " + event.target.getAttribute('data-value') + " ")
-      quill.setSelection(range.index + 1);
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
+            
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+      }
+    } else if (document.selection && document.selection.type != "Control") {
+        // IE < 9
+        document.selection.createRange().pasteHTML(html);
     }
   }
 });
+
+// Editor toolbar options
+function editorBold() {
+    
+}
+
+function editorItalic() {
+
+}
 
 // Save template
 document.querySelector(".save-btn").addEventListener("click", (event) => {
@@ -378,7 +399,7 @@ document.querySelector(".save-btn").addEventListener("click", (event) => {
 
   // Check options
   var options = document.querySelectorAll(".option-input");
-  console.log(options);
+  // console.log(options);
   for (var i = 0; i < options.length; i++) {
     console.log(options[i].value);
     if (options[i].value.length == 0) {
@@ -410,7 +431,7 @@ document.querySelector(".save-btn").addEventListener("click", (event) => {
 
   // Check Empty Tag
   
-  console.log(tag_inputs);
+  // console.log(tag_inputs);
   for (var i = 0; i < tag_inputs.length; i++) {
     if(tag_inputs[i].value == ""){
       tag_inputs[i].classList.add("is-invalid");
@@ -423,6 +444,9 @@ document.querySelector(".save-btn").addEventListener("click", (event) => {
     alert("There are missing or invalid fields");
     return;
   }
+
+  var delta = quill.getContents();
+  console.log(delta);
 });
 
 
