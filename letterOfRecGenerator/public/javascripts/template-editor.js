@@ -325,46 +325,60 @@ document.querySelector(".tags").addEventListener("mousedown", (event) => {
     // console.log("click tag");
     var html = "<span class='span-insert' contenteditable='false'>&nbsp" + 
     event.target.getAttribute("data-value")  + "&nbsp</span>";
-    var sel, range;
-    if (window.getSelection) {
-      // console.log(window.getSelection().anchorNode.id);
-      // console.log(window.getSelection().anchorNode.parentNode.id);
-      if (window.getSelection().anchorNode == null) {
-        return;
-      }
-      if (window.getSelection().anchorNode.id  === "editor" ||
-      window.getSelection().anchorNode.parentNode.id === "editor") {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        // console.log(window.getSelection());
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-
-            var el = document.createElement("div");
-            el.innerHTML = html;
-            var frag = document.createDocumentFragment(), node, lastNode;
-            while ( (node = el.firstChild) ) {
-                lastNode = frag.appendChild(node);
-            }
-            range.insertNode(frag);
-            
-            // Preserve the selection
-            if (lastNode) {
-                range = range.cloneRange();
-                range.setStartAfter(lastNode);
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-      }
-    } else if (document.selection && document.selection.type != "Control") {
-        // IE < 9
-        document.selection.createRange().pasteHTML(html);
-    }
+    insertInEditor(html);
   }
 });
+
+// Handles tab inserts
+document.querySelector("#editor").addEventListener("keydown", (event) => {
+  if (event.keyCode == 9) {
+    var html = "<span class='tab' contenteditable='false'> &#8195 </span>";
+    insertInEditor(html);
+    event.preventDefault();
+  };
+});
+
+// Inserts span element into text editor
+function insertInEditor(html) {
+  var sel, range;
+  if (window.getSelection) {
+    // console.log(window.getSelection().anchorNode.id);
+    // console.log(window.getSelection().anchorNode.parentNode.id);
+    if (window.getSelection().anchorNode == null) {
+      return;
+    }
+    if (window.getSelection().anchorNode.id  === "editor" ||
+    window.getSelection().anchorNode.parentNode.id === "editor") {
+      // IE9 and non-IE
+      sel = window.getSelection();
+      // console.log(window.getSelection());
+      if (sel.getRangeAt && sel.rangeCount) {
+          range = sel.getRangeAt(0);
+          range.deleteContents();
+
+          var el = document.createElement("div");
+          el.innerHTML = html;
+          var frag = document.createDocumentFragment(), node, lastNode;
+          while ( (node = el.firstChild) ) {
+              lastNode = frag.appendChild(node);
+          }
+          range.insertNode(frag);
+          
+          // Preserve the selection
+          if (lastNode) {
+              range = range.cloneRange();
+              range.setStartAfter(lastNode);
+              range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+          }
+      }
+    }
+  } else if (document.selection && document.selection.type != "Control") {
+      // IE < 9
+      document.selection.createRange().pasteHTML(html);
+  }
+}
 
 // Editor toolbar options
 function editorBold() {
