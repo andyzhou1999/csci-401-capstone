@@ -403,6 +403,7 @@ document.querySelector("form").addEventListener("input", function (event) {
             other_tag.classList.add("d-none");
             isUnique = 1;
             event.target.classList.add("is-invalid");
+            break;
           }
           else {
             event.target.classList.remove("is-invalid");
