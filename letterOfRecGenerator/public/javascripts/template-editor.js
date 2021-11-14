@@ -929,18 +929,16 @@ function parseEditor() {
 // Parse text editor mainting html format but replacing tags with <!tag>
 function parseEditorHTML() {
   var htmlText = quill.root.innerHTML;
-  const tagRegexStart = new RegExp("<span class=\"span-insert\" data-type=\".*\"><span contenteditable=\"false\">\s");
-  // const tagRegexEnd = new RegExp("\\s<\/span>.*<\/span>");
-
-  console.log(htmlText);
+  const tagRegexStart = new RegExp(/<span class=\"span-insert\" data-type=\".*?\"><span contenteditable=\"false\">\s/g);
+  const tagRegexEnd = new RegExp(/\s<\/span>.*?<\/span>/g);
   
   htmlText = htmlText.replace(/[\u200B-\u200D\uFEFF]/g, '');
 
-  console.log(htmlText);
-  htmlText = htmlText.replace(tagRegexStart, "<!");
-  htmlText = htmlText.replace(tagRegexEnd, ">");
+  // console.log(htmlText);
+  htmlText = htmlText.replaceAll(tagRegexStart, "<!");
+  htmlText = htmlText.replaceAll(tagRegexEnd, ">");
   
-  console.log(htmlText);
+  // console.log(htmlText);
 }
 
 // Add eventListener to info icons
