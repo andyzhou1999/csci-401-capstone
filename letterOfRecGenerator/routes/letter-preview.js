@@ -36,10 +36,15 @@ router.get("/", async function (req, res, next) {
       console.log("get /  error in letter-preivew: " + err);
       res.status(400).json({ error: "Invalid paramaters" });
     } else {
+      console.log("************************");
+      console.log(Array.from(user.letterTemplates.keys()));
+      console.log(user.enableCustomTemplate);
       res.render("pages/letter-preview", {
         title: form.email,
         id: req.query.id,
         form: form,
+        useCustom: user.enableCustomTemplate,
+        letterTemplates: Array.from(user.letterTemplates.keys()),
       });
     }
   });
@@ -59,16 +64,14 @@ router.get("/form", async function (req, res, next) {
   });
 });
 
-router.post("/save", function (req, res, next) {
+router.post("/save", async function (req, res, next) {
+  var decoded = jwt_decode(req.headers.authorization.replace("Bearer ", ""));
+  var user = await User.findOne({ email: decoded.email });
   Form.completeForm(req.body.id, req.body.letter, function (err, form) {
     if (err) {
       console.log(err);
     } else {
-      res.render("pages/letter-preview", {
-        title: form.email,
-        id: req.query.id,
-        form: form,
-      });
+      res.status(200);
     }
   });
 });
@@ -103,18 +106,43 @@ router.post("/prepareLetter", async function (req, res, next) {
       if (err) {
         console.log(err);
       } else {
+        console.log("Form Data");
+        console.log(form);
         //console.log(form.letter);
-        pulled_text = form.letter;
+        pulled_text = form.template.text;
         res.json(form);
 
-        console.log(pulled_text);
-        var formatted_text = letterParser.htmlstuff(pulled_text);
+        console.log(parseLetter(form));
+
+        console.log(user.templates);
+        form.template.text = letterParser.htmlstuff(
+          decodeLetterHTML(pulled_text)
+        );
+
+        var formatted_text = parseLetter(form);
 
         console.log("loading input.txt");
-        var content = fs.readFileSync(
-          path.resolve("./routes/uploads", "input.docx"),
-          "binary"
-        );
+
+        var content;
+        //if user choose default mode
+        if (!user.useCustomTemplate) {
+          content = fs.readFileSync(
+            path.resolve("./routes/uploads", "input.docx"),
+            "binary"
+          );
+        } else {
+          //user use their own template
+          //create a directory for this user to do file IO
+          var dir = path.join(__dirname, "uploads/" + decoded.email);
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+          }
+
+          fs.writeFileSync(
+            path.join(dir, "input.docx"),
+            user.letterTemplates[req.body.fileName]
+          );
+        }
 
         var zip = new PizZip(content);
 
@@ -162,7 +190,13 @@ router.post("/prepareLetter", async function (req, res, next) {
         var buf = doc.getZip().generate({ type: "nodebuffer" });
 
         // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-        fs.writeFileSync(path.resolve("./routes/uploads", "output.docx"), buf);
+        //also do this in seperate folder to avoid multiple people trying to save letter at the same time
+        var dir_ = path.join(__dirname, "uploads/" + decoded.email);
+        if (!fs.existsSync(dir_)) {
+          fs.mkdirSync(dir_);
+        }
+
+        fs.writeFileSync(path.resolve(dir_, "output.docx"), buf);
       }
     });
     // } ANCHOR: Try to get rid of this part
@@ -172,10 +206,15 @@ router.post("/prepareLetter", async function (req, res, next) {
 });
 
 router.get("/downloads", function (req, res) {
-  var file = path.resolve("./routes/uploads", "output.docx");
+  var decoded = jwt_decode(req.headers.authorization.replace("Bearer ", ""));
+  var file = path.resolve(
+    path.join(__dirname, "uploads/" + decoded.email),
+    "output.docx"
+  );
   res.download(file);
 });
 
+//parse the text
 function parseLetter(form) {
   var tagRegex = /\<\![a-z0-9_]+\>/gi;
   var letter = form.template.text;
@@ -234,6 +273,24 @@ function parseLetter(form) {
   }
 
   return noCapitalization.join("");
+}
+
+function decodeLetterHTML(text) {
+  text = text
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/\<span class\="tag"\>/gi, "")
+    .replace(/\<\/span\>/gi, "")
+    .replace(/\<div\>/gi, "\n")
+    .replace(/\<\/div\>/gi, "")
+    .replace(/\<br\>/gi, "\n")
+    .replace(/\&nbsp;/g, " ");
+  text = text.replace(/\<strong\>\<\!/gi, "<!").replace(/\<\/strong\>/gi, "");
+  text = text.replace(/\<strong\>/gi, "");
+  return text;
 }
 
 module.exports = router;

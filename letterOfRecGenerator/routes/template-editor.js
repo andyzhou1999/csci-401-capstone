@@ -32,11 +32,9 @@ router.get("/", async function (req, res, next) {
         questions: questions,
       });
     } else {
-      letterheadImg = req.user.getDeactivatedTemplate(
-        req.query.id
-      ).letterheadImg;
-      footerImg = req.user.getDeactivatedTemplate(req.query.id).footerImg;
-      questions = req.user.getDeactivatedTemplate(req.query.id).getQuestions();
+      letterheadImg = user.getDeactivatedTemplate(req.query.id).letterheadImg;
+      footerImg = user.getDeactivatedTemplate(req.query.id).footerImg;
+      questions = user.getDeactivatedTemplate(req.query.id).getQuestions();
       res.render("pages/template-editor", {
         title: "VIEWING ARCHIVED TEMPLATE",
         templateName: req.query.title,
@@ -168,7 +166,6 @@ router.get("/template", async function (req, res, next) {
       letterheadImg: user.getTemplate(req.query.id).getLetterheadImg(),
       footerImg: user.getTemplate(req.query.id).getFooterImg(),
       saveSwitch: req.query.saveSwitchData,
-      questions: user.getTemplate(req.query.id).getQuestions(),
     });
   } else {
     res.json({
@@ -179,7 +176,6 @@ router.get("/template", async function (req, res, next) {
         .getLetterheadImg(),
       footerImg: user.getDeactivatedTemplate(req.query.id).getFooterImg(),
       saveSwitch: req.query.saveSwitchData,
-      questions: user.getDeactivatedTemplate(req.query.id).getQuestions(),
     });
   }
 });

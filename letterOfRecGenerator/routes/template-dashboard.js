@@ -67,8 +67,8 @@ router.post("/delete", async function (req, res, next) {
     } else {
       res.render("pages/template-dashboard", {
         title: "Templates",
-        templates: req.user.getTemplates(),
-        emailtemplates: req.user.getEmailTemplates(),
+        templates: user.getTemplates(),
+        emailtemplates: user.getEmailTemplates(),
       });
     }
   });
@@ -85,8 +85,8 @@ router.post("/delete-email", async function (req, res, next) {
     } else {
       res.render("pages/template-dashboard", {
         title: "Templates",
-        templates: req.user.getTemplates(),
-        emailtemplates: req.user.getEmailTemplates(),
+        templates: ruser.getTemplates(),
+        emailtemplates: user.getEmailTemplates(),
       });
     }
   });

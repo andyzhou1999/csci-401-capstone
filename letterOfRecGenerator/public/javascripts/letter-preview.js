@@ -58,7 +58,9 @@ function showEditModal(clicked) {
   var element = document.querySelector(TRIX_EDITOR);
   element.value = "";
   element.editor.setSelectedRange([0, 0]);
-  element.editor.insertHTML(innerContainer.innerHTML);
+  element.editor.insertHTML(
+    document.getElementById(LETTER_CONTAINER_ID).innerHTML
+  );
   var textt = document.getElementsByClassName("attachment__caption");
   modal.style.display = "block";
 }
@@ -76,6 +78,7 @@ function saveEditModal() {
   document.getElementById(LETTER_CONTAINER_ID).innerHTML = letterHTML;
   editor.setSelectedRange([0, editor.getDocument().getLength()]);
   editor.deleteInDirection("forward");
+  element.innerHTML = letterHTML;
 
   $.ajax({
     url: "/letter-preview/save",
@@ -86,6 +89,7 @@ function saveEditModal() {
     type: "POST",
     success: function (data) {
       console.log("success in saveEditModal");
+      location.reload();
     },
     error: function () {
       console.log("error in saveEditModal");
@@ -103,46 +107,29 @@ function cancelEditModal() {
   modal.style.display = "none";
 }
 
-function downloadLetterOLD() {
-  var datepicker = document.querySelectorAll("input[type=date]")[0];
-  var date = datepicker.value;
-  $.ajax({
-    url: "/letter-preview/drive",
-    data: {
-      id: id,
-      letter: letterHTML,
-      date: date,
-    },
-    type: "POST",
-    success: function (d) {
-      console.log("success in drive");
-      window.location.href = "/recommender-dashboard";
-    },
-    error: function () {
-      console.log("error in drive");
-    },
-  });
-}
-
 function saveLetter() {
-  event.preventDefault();
-  var idt = document.getElementById("id1").value;
   var date = document.getElementById("theDate").value;
-  var notifyRecommendee = document.getElementById("notify").checked;
+  var notifyRecommendee = true;
+  var selectedTemplateIndex =
+    document.getElementById("selectTemplate").selectedIndex;
+  var templateFilename =
+    document.getElementById("selectTemplate").options[selectedTemplateIndex]
+      .value;
   $.ajax({
     url: "/letter-preview/prepareLetter",
     data: {
       id: id,
       letter: letterHTML,
-      formID: idt,
+      formID: form._id,
       date: date,
       notify: notifyRecommendee,
+      fileName: templateFilename,
     },
     type: "POST",
     success: function (d) {
       console.log("letter saved successfully");
-      document.getElementById("downloadButton").style.display = "block";
-      document.getElementById("saveButton").style.display = "none";
+      document.getElementById("save").innerHTML = "Download Letter";
+      document.getElementById("save").onclick = downloadLetter;
       alert("Document saved");
       //window.location.href = '/recommender-dashboard';
     },
@@ -192,6 +179,7 @@ function getDestinationRoute(address, params) {
 function createLetterPreview(form, letter) {
   $(function () {
     var letterContainer = document.createElement("div");
+    letterContainer.classList.add("border", "border-secondary", "letterEditor");
     letterContainer.id = LETTER_CONTAINER_ID;
     innerContainer = document.createElement("div");
     innerContainer.id = "print";
@@ -418,15 +406,15 @@ function displayTemplate() {
   }
 }
 
-$(document).ready(function () {
-  setTimeout(function () {
-    var modal = document.getElementById(ADD_QUESTION_MODAL_ID);
-    var element = document.querySelector(TRIX_EDITOR);
-    element.value = "";
-    element.editor.setSelectedRange([0, 0]);
-    element.editor.insertHTML(innerContainer.innerHTML);
-    var textt = document.getElementsByClassName("attachment__caption");
-    modal.style.display = "block";
-    saveEditModal();
-  }, 500);
-});
+// $(document).ready(function () {
+//   setTimeout(function () {
+//     var modal = document.getElementById(ADD_QUESTION_MODAL_ID);
+//     var element = document.querySelector(TRIX_EDITOR);
+//     element.value = "";
+//     element.editor.setSelectedRange([0, 0]);
+//     element.editor.insertHTML(innerContainer.innerHTML);
+//     var textt = document.getElementsByClassName("attachment__caption");
+//     //modal.style.display = "block";
+//     saveEditModal();
+//   }, 500);
+// });
