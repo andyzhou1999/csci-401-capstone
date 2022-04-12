@@ -25,7 +25,7 @@
           <div class = "row g-1 mb-4">
             <div class="form-floating col-md">
               <input type="text" class="form-control" id="fname" required>
-              <label for="fname" class="form-label">Firstname</label>
+              <label for="fname" class="form-label">Firstname<span style="color:#ff0000">*</span></label>
             </div>
             <div class="form-floating col-md">
               <input type="text" class="form-control" id="mname">
@@ -33,7 +33,7 @@
             </div>
             <div class="form-floating col-md">
               <input type="text" class="form-control" id="lname" required>
-              <label for="mname" class="form-label">Lastname</label>  
+              <label for="mname" class="form-label">Lastname<span style="color:#ff0000">*</span></label> 
             </div>
           </div>
 
@@ -43,12 +43,12 @@
                 <datalist id="university-list">
                 </datalist>
               </input>
-              <label for="university" class="form-label">University</label>
+              <label for="university" class="form-label">University<span style="color:#ff0000">*</span></label>
             </div>
 
             <div class="form-floating mb-2">
               <input type="text" class="form-control" id="department" required>
-              <label for="department" class="form-label">Department</label>
+              <label for="department" class="form-label">Department<span style="color:#ff0000">*</span></label>
             </div>
             <div class="form-floating mb-2">
               <textarea class="form-control" id="titles" rows="3" required></textarea>
@@ -70,7 +70,7 @@
             
             <div class="form-floating col-md">
               <input type="tel" class="form-control" id="telephone" pattern="^[0-9]+" required>
-              <label for="phone" class="form-label">Phone Number</label>
+              <label for="phone" class="form-label">Phone Number<span style="color:#ff0000">*</span></label>
             </div>
             <small class="form-text mx-2 mb-2">Numbers only. Provide a number that is the best to contact you.</small>
            
@@ -79,7 +79,7 @@
           <div class = "row g-1 mb-4">
             <div class="form-floating mb-2">
               <input type="text" class="form-control" id="address1" required>
-              <label for="address1" class="form-label">Office Street Address</label>
+              <label for="address1" class="form-label">Office Street Address<span style="color:#ff0000">*</span></label>
             </div>
             <div class="form-floating mb-2">
               <input type="text" class="form-control" id="address2">
@@ -87,16 +87,16 @@
             </div>
             <div class="form-floating mb-3">
               <input type="text" class="form-control" id="address3">
-              <label for="address3" class="form-label">City</label>
+              <label for="address3" class="form-label">City<span style="color:#ff0000">*</span></label>
             </div>
             <div class="form-floating col-md">
               <input type="text" class="form-control" id="address4">
-              <label for="address4" class="form-label">States/Provinces</label>
+              <label for="address4" class="form-label">States/Provinces<span style="color:#ff0000">*</span></label>
             </div>
 
             <div class="form-floating col-md">
               <input type="tel" class="form-control" id="postalCode" pattern="^[0-9]+" required>
-              <label for="postalCode" class="form-label">Postal/Zip code</label>   
+              <label for="postalCode" class="form-label">Postal/Zip code<span style="color:#ff0000">*</span></label>  
             </div>
             <small class="form-text mx-2 mb-2"> What address should I provide? <svg id="address-help" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue" class="bi bi-info-circle" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
