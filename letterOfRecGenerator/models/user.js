@@ -41,6 +41,10 @@ var UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  pic:{
+    type:String,
+    default: "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+   },
   //newly added for user profile page
   firstName: String,
   lastName: String,
