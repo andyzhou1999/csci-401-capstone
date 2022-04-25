@@ -55,9 +55,8 @@
 }
 
 #vid1 {
-  float: left;
-  padding-left: 70px;
-  
+  display: block;
+  margin: auto;
 }
 
 #vid2 {
@@ -103,4 +102,25 @@
 }
 .row{
   width: 100%;
+}
+
+.sample-instructions {
+  padding-right: 60px;
+  padding-left: 60px;
+  font-size: 20px;
+  font-weight: lighter;
+}
+
+.sample-instructions img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+
+#sample-template-description {
+  padding-right: 60px;
+  padding-left: 60px;
+  font-size: 20px;
+  font-weight: lighter;
 }

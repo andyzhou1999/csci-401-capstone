@@ -21,18 +21,18 @@
         <p class="title"><%= title %></p>
         <br>
         <p id="description"> In academia and industry, writing letters of recommendation is a very
-            important task. Many faculty and professionals have a standard template
-            that is merely customized for each request. Others may ask the person to
-            write the recommendation himself, then verify it is accurate before signing.
-            Although this may work, it would be much better if the person requesting
-            the recommendation could help structure the recommendation.
+            important, but sometimes repetitive task. Many faculty and professionals already have a standard template
+            that they merely customize for each request. Others may ask the requester to
+            write the recommendation themselves, then all they need to do is verify that the letter is accurate before signing.
+            Although this sometimes works, the process would be much smoother and accurate if the student requesting
+            the recommendation could provide information to the writer ahead of time.
         <br><br>
-            This application allows a person requesting a recommendation to submit all
-            of the information he wants included through a form, and the person
-            writing the recommendation can then automatically pull that information
-            into a template that he has created. After the letter has been generated,
-            the recommender can download it and ensure it is accurate. After the
-            recommender approves it, the original person can also download the
+            This application allows the individual requesting a recommendation to submit all
+            of the information they want included through a form, and the 
+            writer can automatically pull that information
+            into a template that they have created. After the letter has been generated,
+            the recommender can download it ensure its accuracy. After the
+            recommender approves it, the original requester can also download the
             electronic version of the letter.
         </p>
         <br>
@@ -61,15 +61,15 @@
         <hr>
         <p class="title">Quick Navgation</p>
         <br>
-        <ul id="navigation">
+        <ol id="navigation">
           <li><a href="#intro">Video Introduction</a></li>
           <br>
           <li><a href="#template">Create Templates</a></li>
           <br>
-          <li><a href="#recommend">Send Recommendation</a></li>
+          <li><a href="#recommendation">Send Recommendation</a></li>
           <br>
           
-        </ul>
+        </ol>
         <br>
         <hr>
         <div id="intro">
@@ -77,7 +77,7 @@
           <br>    
             <div id="subtitle1">  
             <video id ="vid1" width="480" height="320" controls>
-              <source src="/images/summary.mp4" type="video/mp4">
+              <source src="/images/summary1.mp4" type="video/mp4">
             </video>
             </div>  
           <br>
@@ -87,22 +87,18 @@
           <p class="title">Create Templates</p>  
           <div class = "video-intro">
             <video id ="vid1" width="480" height="320" controls>
-              <source src="/images/template.mp4" type="video/mp4">
+              <source src="/images/template1.mp4" type="video/mp4">
             </video>
           </div>
           <div class="instructions">
             <ul>
-              
-              <li>Instructors can create templates in template section in the nav bar</li>
-              <li>Direct into template section</li>
-              <li>SCreate the template in the upper right corner</li>
-              <li>Enter the name in Template name input box and click create</li>
-              <li>You can see the DIY template page based on the template we provide</li>
-              <li>If you want to add more information, click the bottom left plus sign in the first red box</li>
-              <li>If you don’t want any part of the template, you can click the trash bin sign on the right side
-              </li>
-              <li>If you want apply any custom template, click the choose file button at the bottom and upload the template you want to use</li>
-              <li>After you submit the template, it will shows  on the main page of template</li>
+              <li>Instructors can create templates by going to template section in the nav bar</li>
+              <li>Create template in the upper right corner</li>
+              <li>Name the new sample template, then click create</li>
+              <li>A template page should appear, with editable text boxes</li>
+              <li>If more information is needed, click the "Add Question" box near the bottom of the page</li>
+              <li>To delete a question, click the trash can icon on the right side of each question</li>
+              <li>After saving a template, it will appear on the template home page</li>
             </ul>
           </div>
         </div>
@@ -112,39 +108,25 @@
           <p class="title">View Recommendations</p>  
           <div class = "video-intro">
             <video id ="vid1" width="480" height="320" controls>
-              <source src="/images/recommend.mp4" type="video/mp4">
+              <source src="/images/recommend1.mp4" type="video/mp4">
             </video>
           </div>
           <div class="instructions">
             <ul>
-              <li>You must have at least one template before you are able to create recommendation</li>
-              <li>Click the create recommendation button on the top right to create send the recommendation template to students to ask students fill the recommendation questionnaire
+              <li>At least one template must be created a recommendation is able to be created</li>
+              <li>Click the create recommendation button on the top right to send the recommendation questionnaire to students
               </li>
-              <li>The sending email window will pop up. Instructors should choose a template, and then fill in the student’s email address, the subject of the email and the content.
+              <li>A send email screen will appear. Instructors should choose a template, and then fill in the student’s email address, subject of the email and the content
               </li>
-              <li>Instructors can check whether the student has filled the form by the form status on the Recommendations page. A green check mark means the form is completed.
+              <li>Instructors can check whether a student has filled out the form by the form status indicator on the Recommendations page. A green check mark means the form is completed
               </li>
-              <li>After the form is filled, instructors can preview the recommendation letter, edit or save the letter, and then download the letter as a doc file.
+              <li>After the form is completed, instructors can preview the recommendation letter, edit or save the letter, or download the letter as a word document
               </li>
               
             </ul>
           </div>
           <div class = "symbols">
             <div class = "row">
-              <div class = "icons">
-                <img class = "icon" src="/images/history.png"/>
-              </div>
-              <div class = "detail">
-                <p>view the history records of all recommendations</p>
-              </div>
-            </div>
-            <div class = "row">
-              <div class = "icons">
-                <img class = "icon" src="/images/mail_sent.png"/>
-              </div>
-              <div class = "detail">
-                <p>Preview the email infomation for current recommendation</p>
-              </div>
             </div>
             <div class = "row">
               <div class = "icons">
@@ -172,9 +154,28 @@
             </div>
           </div>
         </div>
-        
-        <br>
         <hr>
+        <div id="sample">
+          <p class="title">Sample Template</p>  
+          <p id="sample-template-description"> 
+            Below is an example template. A Professor can reference this template while they are deciding what questions to ask a student.
+          </p>
+          <div class="sample-instructions">
+                <img class = "sample-image" src="/images/sample_template.png"/>
+            <ul>
+              <li>Pronouns: Important to ask because this helps define a person and who they are</li>
+              <li>Courses: Requesting information on which class a student took may help remember the student and their work better</li>
+              <li>Year: More general information on the student</li>
+              <li>Program: Asking for which program the student is requesting a recommendation for</li>
+              
+              
+            </ul>
+          </div>
+          </div>
+        </div>
+
+
+
     </div>
   </body>
 </html>

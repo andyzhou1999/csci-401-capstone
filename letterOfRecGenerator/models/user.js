@@ -41,6 +41,10 @@ var UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  pic:{
+    type:String,
+    default: "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+   },
   //newly added for user profile page
   firstName: String,
   lastName: String,
@@ -335,10 +339,12 @@ UserSchema.methods.getForm = function (id, cb) {
     });
 };
 
-UserSchema.methods.getDeactivatedForms = function (cb) {
+UserSchema.methods.getDeactivatedForms = function (cb,match={}) {
   // try getting all forms under this user id
-  User.findOne({ id: this.id })
-    .populate("deactivatedForms")
+  User.findOne({ _id: this._id  })
+    .populate({
+      path: "deactivatedForms",
+      match,})
     .exec(function (err, user) {
       cb(err, user.deactivatedForms);
     });

@@ -155,7 +155,7 @@
             JSON.parse(`<%- JSON.stringify(forms) %>`),
             JSON.parse(`<%- JSON.stringify(templates) %>`),
             JSON.parse(`<%- JSON.stringify(emailtemplates) %>`)
-        ];
+        ];        
 
         var timeSortOrder = -1;
         var emailSortOrder = -1;
@@ -337,7 +337,7 @@
 
         function openHistory(params) {
             // Check to see if the status is green, if not then show error dialog
-            window.location.href = getDestinationRoute('/history', params);
+            //window.location.href = getDestinationRoute('/history', params);
         }
 
         // When the user clicks the preview icon, take them to the letter preview page.

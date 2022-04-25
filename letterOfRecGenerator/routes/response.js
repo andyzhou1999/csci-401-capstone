@@ -12,11 +12,15 @@ router.get("/", async function (req, res, next) {
   //retrive user obj from mongodb
   var user = await User.findOne({ email: decoded.email });
   var questions = [];
+
   user.getForm(req.query.id, function (err, form) {
     if (err) {
       console.log(err);
     } else {
       questions = form.getFormattedQuestions();
+      questions.forEach(i => {
+        i.question = decodeURIComponent(i.question);
+      });
       res.render("pages/response", {
         title: "Received Responses for " + form.email,
         id: req.query.id,

@@ -21,8 +21,14 @@ router.get("/", async function (req, res, next) {
       console.log(err);
       return;
     }
-
+    console.log("template dashboard:");
+    console.log(user.getTemplate());
+    console.log(user.getDeactivatedTemplate());
     var templates = user.getTemplates().toObject();
+    //do not transmit ops because it is not needed to display on template dashboard
+    templates.forEach((template) => {
+      delete template.ops;
+    });
     var tmp_metric = {};
     var last_used = {};
     for (var i = 0; i < forms.length; i++) {

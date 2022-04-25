@@ -13,7 +13,8 @@ var id = parseAttribute("id");
 var letterheadImgData = parseAttribute("letterheadImgData");
 var footerImgData = parseAttribute("footerImgData");
 var saveSwitchData = parseAttribute("saveSwitchData");
-
+var isTemplateChanged = false;
+const savedDataTimeout = 1 * 60 * 60 * 1000;
 /**
  * Prototype class for Questions
  */
@@ -69,15 +70,69 @@ class SpanEmbed extends Embed {
 
 window.onload = function () {
 
-
   // Quill initialization
   SpanEmbed.blotName = 'spanEmbed';
   SpanEmbed.tagName = 'span';
   Quill.register(SpanEmbed);
 
   console.log(id);
-
-  if (id) {
+  //fetch browse saved questions from localStorage in case we leave the page without submitting the form
+  let now = new Date().getTime();
+  let localStorageQuestions = localStorage.getItem(document.getElementById("template-name").value + "Questions");
+  localStorage.removeItem(document.getElementById("template-name").value + "Questions");
+  let templateData = localStorage.getItem(document.getElementById("template-name").value + "TemplateData");
+  localStorage.removeItem(document.getElementById("template-name").value + "TemplateData");
+  let setupTime = localStorage.getItem(document.getElementById("template-name").value + "SetupTime");
+  localStorage.setItem(document.getElementById("template-name").value + "SetupTime", now);
+  if(setupTime != null){
+    //check if data is timeout
+    if(now - setupTime > savedDataTimeout){
+      localStorageQuestions = null;
+      templateData = null;
+    }
+  }
+  if(templateData != null){
+    quill.setContents(JSON.parse(templateData));
+  }
+  //if there is a locally stored template
+  if(localStorageQuestions != null) {
+    localStorageQuestions = JSON.parse(localStorageQuestions);
+    localStorageQuestions.forEach((question) => {
+      var savedQuestion = new Question(
+        question.type,
+        question.question,
+        question.tag,
+        question.optional,
+        question.organizationFlag
+      );
+      savedQuestion.options = question.options;
+      questions.push(savedQuestion);
+    });
+    for(var i = 0 ; i < questions.length ; ++i){
+      if(questions[i].type === "Radio Button"){
+        var optionVals = [];
+        for (var j = 0 ; j < questions[i].options.length ; ++j){
+          optionVals.push(questions[i].options[j].option);
+        }
+        createCard(questions[i].value, questions[i].tag, optionVals, null, "Radio Button");
+      }
+      else if(questions[i].type === "Checkbox"){
+        var optionVals = [];
+        var tagVals = [];
+        for (var j = 0 ; j < questions[i].options.length ; ++j){
+          optionVals.push(questions[i].options[j].option);
+          tagVals.push(questions[i].options[j].tag)
+        }
+        createCard(questions[i].value, null, optionVals, tagVals, "Checkbox");
+      }
+      else if(questions[i].type === "Text"){
+        createCard(questions[i].value, questions[i].tag, null, null , "Text");
+      }
+      else{
+        //// MAYBE CUSTOM??
+      }
+    }
+  }else if (id) {
     $.ajax({
       url: "/template-editor/template",
       data: { id, saveSwitchData },
@@ -143,12 +198,14 @@ window.onload = function () {
     createCard("What is your preferred possessive pronoun?", "Possessive Pronoun", null, null , "Text");
 
   }
-
-  
-
-
   document.activeElement.blur();
 };
+//before leave or refresh the page, save data into the browser
+window.onbeforeunload = function(){
+  let templateData = quill.getContents();
+  localStorage.setItem(document.getElementById("template-name").value + "TemplateData", JSON.stringify(templateData));
+  localStorage.setItem(document.getElementById("template-name").value + "Questions", JSON.stringify(getQuestions()));
+}
 
 // Show options if checkbox or multiple choice is selected
 document.querySelector("form").addEventListener("change", (event) => {
@@ -279,8 +336,10 @@ document.querySelector("form").addEventListener("click", (event) => {
 
 
 // Handles input events inside text editor
+// Check if user has changed template
 document.querySelector("#editor").addEventListener("input", (event) => {
   document.querySelector("#editor").classList.remove("editor-is-invalid");
+  isTemplateChanged = true;
 });
 
 // Adds option element
@@ -463,7 +522,8 @@ document.querySelector(".add-questions-btn").addEventListener("click", (event) =
 
 // Args string, string, array of strings, array of strings
 function createCard(questionVal, tagVal, optionsVal, tagsVal, questionType) {
-
+  questionVal =  decodeURIComponent(questionVal);
+  tagVal = decodeURIComponent(tagVal);
   var form = document.querySelector("form");
 
   var newQuestion = document.createDocumentFragment();
@@ -1050,8 +1110,9 @@ document.querySelector(".save-btn").addEventListener("click", (event) => {
     name: document.getElementById("template-name").value,
     text: encodeLetterHTML(quill.root.innerHTML),
     htmlText: encodeLetterHTML(quill.root.innerHTML),
-    parsedHtmlText: parsedHtmlLetter,
+    // parsedHtmlText: parsedHtmlLetter,
     questions: getQuestions(),
+    ops: quill.getContents().ops, //save quill editor operations
     };
 
   if (letterheadImgData) {
@@ -1081,6 +1142,7 @@ document.querySelector(".save-btn").addEventListener("click", (event) => {
       },
       error: function (err) {
         console.log("error in saveTemplate:" + err);
+        alert("Template name already exists.");
         return;
       },
     });
@@ -1253,11 +1315,10 @@ function getQuestions() {
     else {
       type = "Custom";
     }
-
     var newQuestion = new Question(
       type,
-      questionInputs[i].value,
-      tag,
+      encodeURIComponent(questionInputs[i].value),
+      encodeURIComponent(tag),
       false,
       false
     );

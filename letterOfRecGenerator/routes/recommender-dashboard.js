@@ -66,8 +66,8 @@ router.post("/", async function (req, res, next) {
           "https://" + domain + "/form-entry/" + form.getLink()
         );
 
-        const email_username = process.env.EMAILUSER;
-        const email_password = process.env.EMAILPASS;
+        const email_username = "process.env.EMAILUSER";
+        const email_password = "process.env.EMAILPASS";
         const email_sender =
           "'Letter of Recommendation Generator' <" + email_username + ">";
 
@@ -136,6 +136,11 @@ router.post("/delete", async function (req, res, next) {
         }
       });
     }
+  });
+
+  user.getDeactivatedForms((err,form)=>{
+    console.log("deactive form length:");
+    console.log(form.length);
   });
 });
 

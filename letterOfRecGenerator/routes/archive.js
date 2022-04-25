@@ -9,18 +9,35 @@ router.get("/", async function (req, res, next) {
 
   //retrive user obj from mongodb
   var user = await User.findOne({ email: decoded.email });
+
+
+  user.getDeactivatedForms((err,form)=>{console.log(form.length)});
+  
+
+  
   user.getDeactivatedForms(function (err, deactivatedForms) {
     if (err) {
       console.log(err);
     } else {
+      // console.log("deactive_from:");
+      // console.log(deactivatedForms.toObject());
+      // console.log(deactivatedForms.length);
+      let new_deactiveFroms=deactivatedForms.toObject();
+      let new_templates=user.getDeactivatedTemplates().toObject();
+      new_deactiveFroms.forEach((form)=>{form.template.ops=""; }); //remove template.ops attribute.
+      new_templates.forEach((template)=>{template.ops="";}); ////remove template.ops attribute.
       res.render("pages/archive", {
         title: "Archive",
-        forms: deactivatedForms,
+        //forms: deactivatedForms.toObject(),
+        forms: new_deactiveFroms,
         emailtemplates: user.getDeactivatedEmailTemplates(),
-        templates: user.getDeactivatedTemplates(),
+        //templates: user.getDeactivatedTemplates(),
+        templates:new_templates,
       });
     }
   });
+  
+
 });
 
 router.post("/restore-template", async function (req, res, next) {

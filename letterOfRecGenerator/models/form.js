@@ -33,6 +33,7 @@ var FormSchema = new Schema({
   organization: String,
   //this will store email addr of the owner, instead of owner's userID
   owner: String,
+  savedLetterOps: Schema.Types.Mixed,
 });
 
 FormSchema.methods.getResponses = function () {
@@ -122,6 +123,15 @@ FormSchema.methods.setOrganization = function (organization) {
   this.organization = organization;
   this.save();
 };
+
+FormSchema.methods.setSavedLetterOps = function (savedLetterOps) {
+  this.savedLetterOps = savedLetterOps;
+  this.save();
+}
+
+FormSchema.methods.getSavedLetterOps = function (){
+  return this.savedLetterOps;
+}
 
 /**
  * Happens when student submits his/her response.

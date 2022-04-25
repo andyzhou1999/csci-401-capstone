@@ -20,6 +20,8 @@ const TRIX_EDITOR = "trix-editor";
 const OUTER_CONTAINER = "outer-container";
 var edited = false;
 var formatted;
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+                "November", "December"];
 
 function onLoad() {
   $.ajax({
@@ -34,7 +36,7 @@ function onLoad() {
         type: "GET",
         success: function (dat) {
           console.log("page load success");
-          letterHTML = createLetterPreview(form, form.letter);
+              letterHTML = createLetterPreview(form, form.letter);
         },
       });
     },
@@ -56,7 +58,7 @@ function getQueryVariable() {
   document.getElementById("id1").value = "cok";
 }
 
-function showEditModal(clicked) {
+/* function showEditModal(clicked) {
   var modal = document.getElementById(ADD_QUESTION_MODAL_ID);
   var element = document.querySelector(TRIX_EDITOR);
   element.value = "";
@@ -66,23 +68,23 @@ function showEditModal(clicked) {
   );
   var textt = document.getElementsByClassName("attachment__caption");
   modal.style.display = "block";
-}
+} */
 
 // Saves, exits, and updates letter preview
-function saveEditModal() {
+/* function saveEditModal() {
   var modal = document.getElementById(ADD_QUESTION_MODAL_ID);
   var element = document.querySelector(TRIX_EDITOR);
 
   document.getElementById("letter-text").innerText = element.innerText;
   updated = true;
   modal.style.display = "none";
-}
+} */
 
 // Closes without changing
-function cancelEditModal() {
+/* function cancelEditModal() {
   var modal = document.getElementById(ADD_QUESTION_MODAL_ID);
   modal.style.display = "none";
-}
+} */
 
 function saveLetter() {
   var date = document.getElementById("theDate").value;
@@ -158,7 +160,7 @@ function downloadLetter() {
   });
 }
 
-function test() {
+/* function test() {
   $.ajax({
     url: "/letter-preview/test",
     data: {
@@ -173,15 +175,34 @@ function test() {
       console.log("error in drive");
     },
   });
-}
+} */
 
-function getDestinationRoute(address, params) {
+/* function getDestinationRoute(address, params) {
   return address + "?, params=" + params;
-}
+} */
 
 // Creates the divs for each item in array
 function createLetterPreview(form, letter) {
-  $(function () {
+  //If there exists recommendation letter saved previuosly
+  if(form?.savedLetterOps){
+    quill.setContents(form?.savedLetterOps);
+  }else{ //render recommendation letter by replacing tag with student's response
+    let quillOps = form.template.ops;
+    var responses = form.responses;
+    let tagResponsePair = new Map();
+    responses.forEach((i) => {
+      tagResponsePair.set(decodeURIComponent(i.tag), i.response);
+    });
+
+    quillOps.forEach((op) => {
+      if(op.insert?.spanEmbed?.value){
+        console.log(op);
+        op.insert = tagResponsePair.get(op.insert?.spanEmbed?.value);
+      }
+    });
+    quill.setContents(quillOps);
+  }
+  /* $(function () {
     var letterContainer = document.createElement("div");
     letterContainer.classList.add("border", "border-secondary", "letterEditor");
     letterContainer.id = LETTER_CONTAINER_ID;
@@ -203,9 +224,9 @@ function createLetterPreview(form, letter) {
     letterContainer.appendChild(innerContainer);
     outerContainer.appendChild(letterContainer);
     return innerContainer.innerHTML;
-  });
+  }); */
 }
-function parseLetter(form) {
+/* function parseLetter(form) {
   //var letter = form.template.parsed;
   var letter_html = form.template.parsedHtmlText;
   var responses = form.responses;
@@ -254,7 +275,7 @@ function parseLetter(form) {
     }
   }
   return noCapitalization.join("");
-}
+} */
 
 function parseEmailLetter(body) {
   $.ajax({
@@ -414,3 +435,64 @@ function displayTemplate() {
 //     saveEditModal();
 //   }, 500);
 // });
+
+function saveQuill(){
+  $.ajax({
+    url: "/letter-preview/saveLetter",
+    data: {
+      id: id,
+      savedLetterOps: quill.getContents().ops
+    },
+    type: "POST",
+    success: function (d) {
+      console.log("letter saved successfully");
+    },
+    error: function () {
+      console.log("error saving letter");
+    },
+  });
+}
+
+//Download recommendation letter on the front end
+async function downloadQuill(){
+  //add user input date to recommendation letter
+  let date = document.getElementById("theDate").value;
+  date = parseDate(date);
+  let delta = quill.getContents();
+  delta.ops.unshift(
+    {
+    insert : date
+  },{
+    attributes : {
+      align : "right"
+    },
+    insert : "\n"
+  });
+  
+  let quillToWordConfig = {
+      exportAs: 'blob',
+      paragraphStyles: {
+        normal : { //change the configuration to single spacing
+              paragraph: {
+                spacing: {
+                    before: 50,
+                    after: 50
+                }
+            }
+          }
+        }
+    };
+    
+  let docAsBlob = await window.quillToWord.generateWord(delta, quillToWordConfig);
+  window.saveAs.saveAs(docAsBlob, 'recommendation-letter.docx');
+}
+
+function parseDate(rawDate){
+  let arr = [];
+  arr = rawDate.split('-');
+  year = arr[0];
+  month = parseInt(arr[1]);
+  day = arr[2];
+  let date = months[month-1] + " " + day + ", " + year;
+  return date;
+}

@@ -42,6 +42,7 @@ const User = require("./models/user");
 const publicKey = fs.readFileSync(
   path.join(__dirname, "/config/jwtRS256.key.pub")
 );
+const history=require("./routes/history");
 
 const app = express();
 
@@ -97,6 +98,7 @@ app.all("/", (req, res) => {
   }
 });
 //api routing handling
+app.use("/history",history);
 app.use("/users", users);
 app.use("/forms", [isAuthenticated, isProfileSet], forms);
 app.use("/template-editor", [isAuthenticated, isProfileSet], createTemplate);
@@ -115,6 +117,7 @@ app.use(
   [isAuthenticated, isProfileSet],
   templateDashboard
 );
+
 app.use("/archive", [isAuthenticated, isProfileSet], archive);
 app.use("/about", about);
 app.use("/api", api);
@@ -170,7 +173,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("pages/error");
+  //res.render("pages/error");
 });
 
 // Sets "X-Frame-Options: DENY"
