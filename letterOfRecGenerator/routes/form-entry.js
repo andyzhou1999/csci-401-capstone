@@ -67,8 +67,8 @@ router.post("/", function (req, res, next) {
 });
 
 function sendEmail(email) {
-  const email_username = "minyi.chen2333@gmail.com";
-  const email_password = "@b55Cpm75";
+  const email_username = "process.env.EMAILUSER";
+  const email_password = "process.env.EMAILPASS";
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({

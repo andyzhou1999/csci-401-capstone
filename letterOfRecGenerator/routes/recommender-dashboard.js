@@ -66,8 +66,8 @@ router.post("/", async function (req, res, next) {
           "https://" + domain + "/form-entry/" + form.getLink()
         );
 
-        const email_username = "minyi.chen2333@gmail.com";
-  const email_password = "@b55Cpm75";
+        const email_username = "process.env.EMAILUSER";
+        const email_password = "process.env.EMAILPASS";
         const email_sender =
           "'Letter of Recommendation Generator' <" + email_username + ">";
 
